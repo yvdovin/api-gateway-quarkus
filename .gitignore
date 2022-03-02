@@ -1,0 +1,15 @@
+build/
+.idea/
+.ideaDataSources/
+dataSources/
+generated/
+gen/
+.gradle/
+out/
+/src/main/resources/application.yaml
+/src/main/resources/application.yml
+*.ipr
+*.iws
+*.iml
+*.log
+*.uml

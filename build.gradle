@@ -1,0 +1,49 @@
+plugins {
+    id "java"
+    id "io.quarkus" version "2.7.2.Final"
+}
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+ext {
+    quarkusVersion = '2.7.2.Final'
+    lombokVersion = '1.18.22'
+}
+
+dependencies {
+    implementation platform("io.quarkus:quarkus-bom:$quarkusVersion")
+    implementation('io.quarkus:quarkus-resteasy-reactive',
+            'io.quarkus:quarkus-reactive-routes',
+            'io.quarkus:quarkus-redis-client',
+            'io.smallrye.reactive:smallrye-mutiny-vertx-web-client',
+            'org.projectlombok:lombok:1.18.20',
+            'ru.tsc.crm:session-data-model:1.3.0')
+
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    //implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    //implementation 'io.quarkus:quarkus-resteasy-jackson'
+    //implementation 'io.quarkus:quarkus-resteasy-mutiny'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = "https://bcvm888.dev.ts:8443/repository/mvn-t1-crm"
+        credentials {
+            username = System.getenv("NEXUS_USER")
+            password = System.getenv("NEXUS_PASSWORD")
+        }
+    }
+}
