@@ -2,6 +2,8 @@ package org.example.service.redis;
 
 import io.quarkus.redis.client.reactive.ReactiveRedisClient;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.redis.client.Redis;
+import io.vertx.mutiny.redis.client.Request;
 import io.vertx.mutiny.redis.client.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -10,20 +12,19 @@ import org.apache.logging.log4j.message.MapMessage;
 import ru.tsc.crm.quarkus.common.uuid.UuidUtils;
 
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Optional.ofNullable;
 
-//TODO перенести это все в утил либу
 @Singleton
 @RequiredArgsConstructor
 @Log4j2
 public class RedisClient {
 
     private final ReactiveRedisClient reactiveRedisClient;
-    //private final Redis redis;
+    private final Redis redis;
 
     public <T> Uni<T> get(String key, Function<Response, T> mapper, Function<T, String> logMapper) {
         var redisRequestId = UuidUtils.generateDefaultUuid();
@@ -80,16 +81,37 @@ public class RedisClient {
                 }));
     }
 
-//    public Uni<List<Response>> batch(List<Request> requests) {
-//        //var redisRequestId = UuidUtils.generateDefaultUuid();
-//        var point = "RedisClient.batch";
-//        //withRedisRequestId(redisRequestId, () -> log.debug(point + ".in size={}", requests.size()));
-//        return redis.batch(requests)
-//                .onItem()
-//                .invoke(responses -> withRedisRequestId(redisRequestId, () -> log.debug(point + ".out result={}", responses.toString())))
-//                .onFailure()
-//                .invoke(e -> withRedisRequestId(redisRequestId, () -> log.error(point + ".thrown {}", e.getMessage())));
-//    }
+    public Uni<List<Response>> batch(List<Request> requests) {
+        var redisRequestId = UuidUtils.generateDefaultUuid();
+        var startMillis = System.currentTimeMillis();
+        if (log.isDebugEnabled()) {
+            withRedisRequestId(redisRequestId, () -> log.debug(new MapMessage<>(Map.of(
+                    "point", "RedisClient.batch.in",
+                    "redis", Map.of(
+                            "size", requests.size()
+                    )))));
+        }
+        return redis.batch(requests)
+                .onItem()
+                .invoke(responses -> {
+                    if (log.isDebugEnabled()) {
+                        withRedisRequestId(redisRequestId, () -> log.debug(new MapMessage<>(Map.of(
+                                "point", "RedisClient.batch.out",
+                                "redis", Map.of(
+                                        "result", responses.toString(),
+                                        "time", System.currentTimeMillis() - startMillis
+                                )))));
+                    }
+                })
+                .onFailure()
+                .invoke(e ->
+                        withRedisRequestId(redisRequestId, () -> log.debug(new MapMessage<>(Map.of(
+                                "point", "RedisClient.batch.thrown",
+                                "redis", Map.of(
+                                        "error", e.getMessage(),
+                                        "time", System.currentTimeMillis() - startMillis
+                                ))))));
+    }
 
     private void withRedisRequestId(String redisRequestId, Runnable runnable) {
         try (var ignored = CloseableThreadContext.put("redisRequestId", redisRequestId)) {

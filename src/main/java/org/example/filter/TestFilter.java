@@ -24,10 +24,10 @@ public class TestFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        redisClientAdapter.getSession("432da11e4acec811")
-                .onItem()
-                .invoke((Consumer<SessionDataOuterClass.SessionData>) System.out::println)
-                .subscribeAsCompletionStage()
-                .toCompletableFuture();
+//        redisClientAdapter.getSession("432da11e4acec811")
+//                .onItem()
+//                .invoke((Consumer<SessionDataOuterClass.SessionData>) System.out::println)
+//                .subscribeAsCompletionStage()
+//                .toCompletableFuture();
     }
 }
