@@ -18,6 +18,7 @@ import static io.vertx.core.http.HttpHeaders.COOKIE;
 
 @Singleton
 public class ProviderMethodClient {
+
     private final WebClient webClient;
     private final String providerMethodUrl;
 
@@ -26,20 +27,6 @@ public class ProviderMethodClient {
     ) {
         this.webClient = webClient;
         this.providerMethodUrl = providerMethodUrl;
-    }
-
-    public Uni<String> getMethods() {
-        System.out.println("Start web client");
-        return webClient.getAbs("%s/spring/getData".formatted(providerMethodUrl))
-                //.addQueryParam("type", type)
-                //.putHeaders(resolveTracingHeaders())
-                //.putHeader(COOKIE.toString(), Cookie.cookie(SESSION_ID, sessionId).encode())
-                //.putHeader(CONTENT_TYPE.toString(), ContentType.APPLICATION_JSON.toString())
-                .send()
-                .map(this::extractResponse)
-                .onFailure()
-                .invoke(System.out::print);
-        //  .invoke(e -> log.error("ProviderMethodClient.getMethods.thrown {}", e.getMessage()));
     }
 
     private MultiMap resolveTracingHeaders() {
@@ -51,17 +38,13 @@ public class ProviderMethodClient {
 
     private String extractResponse(HttpResponse<Buffer> httpResponse) {
         int status = httpResponse.statusCode();
-        System.out.println(status);
         if (status < 300) {
-            String entries = httpResponse.bodyAsString();
-            System.out.println(entries);
-            return entries;
+            return httpResponse.bodyAsString();
         }
         throw new RuntimeException();
     }
 
     public Uni<JsonObject> getMethods(JsonObject request, String sessionId, String type) {
-        System.out.println(request);
         return webClient.postAbs("%s/methods/filter".formatted(providerMethodUrl))
                 .addQueryParam("type", type)
                 .putHeaders(resolveTracingHeaders())
@@ -74,9 +57,7 @@ public class ProviderMethodClient {
     }
 
     private JsonObject extractResponseJson(HttpResponse<Buffer> httpResponse) {
-
         int status = httpResponse.statusCode();
-        System.out.println(status);
         if (status < 300) {
             return httpResponse.bodyAsJsonObject();
         }

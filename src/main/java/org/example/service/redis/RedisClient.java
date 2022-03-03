@@ -1,7 +1,7 @@
 package org.example.service.redis;
 
-import io.quarkus.redis.client.reactive.ReactiveRedisClient;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.redis.client.Command;
 import io.vertx.mutiny.redis.client.Redis;
 import io.vertx.mutiny.redis.client.Request;
 import io.vertx.mutiny.redis.client.Response;
@@ -23,7 +23,6 @@ import static java.util.Optional.ofNullable;
 @Log4j2
 public class RedisClient {
 
-    private final ReactiveRedisClient reactiveRedisClient;
     private final Redis redis;
 
     public <T> Uni<T> get(String key, Function<Response, T> mapper, Function<T, String> logMapper) {
@@ -36,7 +35,7 @@ public class RedisClient {
                             "key", key
                     )))));
         }
-        return reactiveRedisClient.get(key)
+        return redis.send(Request.cmd(Command.GET).arg(key))
                 .map(response -> {
                     if (response != null) {
                         var result = mapper.apply(response);

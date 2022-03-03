@@ -4,15 +4,13 @@ import io.quarkus.vertx.web.Route;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.core.buffer.Buffer;
+import io.vertx.mutiny.ext.web.client.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.logic.ApiGatewayProxyOperation;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.Produces;
 
-//@Produces({"application/json;charset=UTF-8"})
 @RequiredArgsConstructor
 @ApplicationScoped
 public class ApiGatewayController {

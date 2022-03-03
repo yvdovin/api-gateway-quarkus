@@ -5,13 +5,12 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.mapping.Mapping;
+import org.example.mapping.Dispatcher;
 import org.example.service.redis.RedisClientAdapter;
 import org.example.service.rest.ProviderMethodClientAdapter;
-import org.example.service.rest.WebClientAdapter;
+import org.example.service.rest.ProxyWebClientAdapter;
 
 import javax.inject.Singleton;
-import java.util.regex.Pattern;
 
 @Singleton
 @RequiredArgsConstructor
@@ -19,24 +18,17 @@ public class ApiGatewayProxyOperation {
 
     private final RedisClientAdapter redisClientAdapter;
     private final ProviderMethodClientAdapter providerMethodClientAdapter;
-    private final WebClientAdapter webClientAdapter;
+    private final ProxyWebClientAdapter webClientAdapter;
 
     //TODO при ошибках с последнего вызова в эксепшн не падать, а пробрасывать
     public Uni<HttpResponse<Buffer>> doCall(RoutingContext routingContext) {
         var sessionId = routingContext.request().getCookie("sessionId").getValue();
         return redisClientAdapter.refreshSession(sessionId)
                 .flatMap(unused -> {
-                            var path = routingContext.request().path();
-                            System.out.println(path);
-                            var keyForProviderService = Mapping.map.keySet()
-                                    .stream()
-                                    .filter(k -> Pattern.matches(k, routingContext.request().path()))
-                                    .findFirst()
-                                    .orElseThrow();
                             var method = routingContext.request().method().toString();
-                            var joiningMethodWithPath = method + Mapping.map.get(keyForProviderService);
+                            var joiningMethodWithPath = method + Dispatcher.dispatch(routingContext.request().path());
                             return providerMethodClientAdapter.checkMethods(joiningMethodWithPath, sessionId, null)
-                                    .flatMap(u -> webClientAdapter.doCall(routingContext));
+                                    .flatMap(u -> webClientAdapter.doProxyCall(routingContext));
                         }
                 );
     }
