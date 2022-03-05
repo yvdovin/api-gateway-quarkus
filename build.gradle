@@ -3,7 +3,7 @@ plugins {
     id "io.quarkus" version "2.7.1.Final"
 }
 
-group 'org.example'
+group 'ru.tsc.crm'
 version '1.0-SNAPSHOT'
 
 ext {
@@ -17,10 +17,12 @@ dependencies {
     implementation(
             'io.quarkus:quarkus-reactive-routes',
             'io.quarkus:quarkus-redis-client',
+            'io.quarkus:quarkus-scheduler',
             'io.smallrye.reactive:smallrye-mutiny-vertx-web-client',
             'org.projectlombok:lombok:1.18.20',
             'ru.tsc.crm.quarkus:quarkus-common:3.8.0',
             'ru.tsc.crm.quarkus:quarkus-http:3.8.0',
+            'ru.tsc.crm.quarkus:quarkus-error:3.8.0',
             'ru.tsc.crm:session-data-model:1.3.0')
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"

@@ -1,4 +1,4 @@
-package org.example.configuration;
+package ru.tsc.crm.configuration;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.client.WebClientOptions;
@@ -6,8 +6,8 @@ import io.vertx.ext.web.client.impl.WebClientInternal;
 import io.vertx.mutiny.ext.web.client.WebClient;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.example.service.rest.ProviderMethodClient;
-import org.example.service.rest.ProxyWebClient;
+import ru.tsc.crm.service.rest.ProviderMethodClient;
+import ru.tsc.crm.service.rest.ProxyWebClient;
 import ru.tsc.crm.quarkus.http.client.WebClientInterceptor;
 
 import javax.inject.Named;

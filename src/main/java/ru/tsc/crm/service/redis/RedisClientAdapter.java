@@ -1,4 +1,4 @@
-package org.example.service.redis;
+package ru.tsc.crm.service.redis;
 
 import com.google.protobuf.util.JsonFormat;
 import io.smallrye.mutiny.Uni;
@@ -30,7 +30,7 @@ public class RedisClientAdapter {
     }
 
     //todo exception
-    public Uni<Void> refreshSession(String sessionId) {
+    public Uni<SessionDataOuterClass.SessionData> refreshSession(String sessionId) {
         return client.get(USER_DATA_BY_SESSION_ID + sessionId, Response::toBytes, this::toPrettyString)
                 .flatMap(sessionDataBytes -> {
                     if (sessionDataBytes == null) {

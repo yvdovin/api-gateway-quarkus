@@ -1,4 +1,4 @@
-package org.example.service.redis;
+package ru.tsc.crm.service.redis;
 
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.redis.client.Command;

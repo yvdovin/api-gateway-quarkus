@@ -1,6 +1,7 @@
-package org.example.service.rest;
+package ru.tsc.crm.service.rest;
 
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.mutiny.ext.web.client.HttpRequest;
 import io.vertx.mutiny.ext.web.client.WebClient;
@@ -31,5 +32,19 @@ public class ProxyWebClient {
             return httpRequest.sendBuffer(Buffer.newInstance(routingContext.getBody()));
         }
         return httpRequest.send();
+    }
+
+    public Uni<HttpResponse<Buffer>> doProxyCall(org.jboss.resteasy.spi.HttpRequest request, byte[] body) {
+        var absoluteURI = request.getUri().getAbsolutePath().toString()
+                .replace("api-gateway/", "")
+                .replace("8081", "8084");
+
+
+        HttpRequest<Buffer> bufferHttpRequest = webClient.requestAbs(HttpMethod.valueOf(request.getHttpMethod()), absoluteURI);
+        request.getHttpHeaders().getRequestHeaders().forEach(bufferHttpRequest::putHeader);
+        if (request.getInputStream() != null) {
+            return bufferHttpRequest.sendBuffer(Buffer.buffer(body));
+        }
+        return bufferHttpRequest.send();
     }
 }

@@ -1,4 +1,4 @@
-package org.example;
+package ru.tsc.crm;
 
 import io.quarkus.runtime.Quarkus;
 

@@ -1,4 +1,4 @@
-package org.example.configuration;
+package ru.tsc.crm.configuration;
 
 import io.vertx.mutiny.redis.client.Redis;
 

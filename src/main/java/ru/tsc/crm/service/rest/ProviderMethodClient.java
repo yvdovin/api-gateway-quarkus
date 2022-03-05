@@ -1,4 +1,4 @@
-package org.example.service.rest;
+package ru.tsc.crm.service.rest;
 
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
