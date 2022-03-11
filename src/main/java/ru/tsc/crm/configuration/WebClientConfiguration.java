@@ -1,6 +1,7 @@
 package ru.tsc.crm.configuration;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.impl.WebClientInternal;
 import io.vertx.mutiny.ext.web.client.WebClient;
@@ -16,10 +17,10 @@ import javax.ws.rs.Produces;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class WebClientConfiguration {
 
-    private final Vertx vertx;
+    //private final Vertx vertx;
 
     @Singleton
     @Named("providerMethodWebClient")
@@ -35,6 +36,7 @@ public class WebClientConfiguration {
                 .setVerifyHost(false)
                 .addEnabledSecureTransportProtocol("TLSv1.1")
                 .addEnabledSecureTransportProtocol("TLSv1.2");
+        var vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true));
         var webClientInternal = (WebClientInternal) io.vertx.ext.web.client.WebClient.create(vertx, options);
         webClientInternal.addInterceptor(new WebClientInterceptor(ProviderMethodClient.class));
         return new WebClient(webClientInternal);
@@ -54,6 +56,7 @@ public class WebClientConfiguration {
                 .setVerifyHost(false)
                 .addEnabledSecureTransportProtocol("TLSv1.1")
                 .addEnabledSecureTransportProtocol("TLSv1.2");
+        var vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true));
         var webClientInternal = (WebClientInternal) io.vertx.ext.web.client.WebClient.create(vertx, options);
         webClientInternal.addInterceptor(new WebClientInterceptor(ProxyWebClient.class));
         return new WebClient(webClientInternal);

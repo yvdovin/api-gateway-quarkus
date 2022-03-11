@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.message.MapMessage;
+import ru.tsc.crm.error.exception.ExceptionFactory;
 import ru.tsc.crm.quarkus.common.uuid.UuidUtils;
 
 import javax.inject.Singleton;
@@ -17,6 +18,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.Optional.ofNullable;
+import static ru.tsc.crm.error.InvocationExceptionCode.REDIS;
+import static ru.tsc.crm.error.ModuleOperationCode.resolve;
+import static ru.tsc.crm.error.exception.ExceptionFactory.newRetryableException;
 
 @Singleton
 @RequiredArgsConstructor
@@ -69,15 +73,18 @@ public class RedisClient {
                     return null;
                 })
                 .onFailure()
-                .invoke(e -> withRedisRequestId(redisRequestId, () -> {
-                    var message = ofNullable(e.getMessage()).orElse("null");
-                    log.error(new MapMessage<>(Map.of(
-                            "point", "RedisClient.get.thrown",
-                            "redis", Map.of(
-                                    "thrown", message,
-                                    "time", System.currentTimeMillis() - startMillis
-                            ))));
-                }));
+                .transform(e -> {
+                    withRedisRequestId(redisRequestId, () -> {
+                        var message = ofNullable(e.getMessage()).orElse("null");
+                        log.error(new MapMessage<>(Map.of(
+                                "point", "RedisClient.get.thrown",
+                                "redis", Map.of(
+                                        "thrown", message,
+                                        "time", System.currentTimeMillis() - startMillis
+                                ))));
+                    });
+                    return newRetryableException(e, resolve(), REDIS, e.getMessage());
+                });
     }
 
     public Uni<List<Response>> batch(List<Request> requests) {
@@ -103,13 +110,15 @@ public class RedisClient {
                     }
                 })
                 .onFailure()
-                .invoke(e ->
-                        withRedisRequestId(redisRequestId, () -> log.debug(new MapMessage<>(Map.of(
-                                "point", "RedisClient.batch.thrown",
-                                "redis", Map.of(
-                                        "error", e.getMessage(),
-                                        "time", System.currentTimeMillis() - startMillis
-                                ))))));
+                .transform(e -> {
+                    withRedisRequestId(redisRequestId, () -> log.debug(new MapMessage<>(Map.of(
+                            "point", "RedisClient.batch.thrown",
+                            "redis", Map.of(
+                                    "error", e.getMessage(),
+                                    "time", System.currentTimeMillis() - startMillis
+                            )))));
+                    return newRetryableException(e, resolve(), REDIS, e.getMessage());
+                });
     }
 
     private void withRedisRequestId(String redisRequestId, Runnable runnable) {

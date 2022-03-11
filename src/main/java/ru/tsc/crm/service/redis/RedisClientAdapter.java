@@ -13,6 +13,9 @@ import ru.tsc.crm.session.model.proto.SessionDataOuterClass;
 import javax.inject.Singleton;
 import java.util.List;
 
+import static ru.tsc.crm.error.ModuleOperationCode.resolve;
+import static ru.tsc.crm.error.SecurityExceptionCode.SESSION_DATA_NOT_FOUND;
+import static ru.tsc.crm.error.exception.ExceptionFactory.newSecurityException;
 import static ru.tsc.crm.session.RedisKeyPrefix.SESSIONS_IDS_BY_LOGIN;
 import static ru.tsc.crm.session.RedisKeyPrefix.USER_DATA_BY_SESSION_ID;
 
@@ -29,12 +32,11 @@ public class RedisClientAdapter {
         this.sessionExpiry = sessionExpiry;
     }
 
-    //todo exception
     public Uni<SessionDataOuterClass.SessionData> refreshSession(String sessionId) {
         return client.get(USER_DATA_BY_SESSION_ID + sessionId, Response::toBytes, this::toPrettyString)
                 .flatMap(sessionDataBytes -> {
                     if (sessionDataBytes == null) {
-                        var exception = new RuntimeException();
+                        var exception = newSecurityException(resolve(), SESSION_DATA_NOT_FOUND, "sessionId='%s'".formatted(sessionId));
                         return Uni.createFrom().failure(() -> exception);
                     }
                     var login = SessionDataUtil.getSessionData(sessionDataBytes).getUser().getLogin();
@@ -49,12 +51,6 @@ public class RedisClientAdapter {
                     return client.batch(requests)
                             .map(u -> null);
                 });
-    }
-
-    @SneakyThrows
-    private SessionDataOuterClass.SessionData getSessionData(io.vertx.mutiny.redis.client.Response response) {
-        var bytes = response.toBytes();
-        return SessionDataOuterClass.SessionData.parseFrom(bytes);
     }
 
     @SneakyThrows

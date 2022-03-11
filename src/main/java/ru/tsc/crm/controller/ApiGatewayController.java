@@ -4,8 +4,9 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
 import lombok.RequiredArgsConstructor;
-import ru.tsc.crm.logic.ApiGatewayProxyOperation;
+import lombok.extern.log4j.Log4j2;
 import org.jboss.resteasy.spi.HttpRequest;
+import ru.tsc.crm.logic.ApiGatewayProxyOperation;
 import ru.tsc.crm.mapping.MappingRefresh;
 
 import javax.ws.rs.*;
@@ -18,7 +19,8 @@ import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_SPAN_ID;
 import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_TRACE_ID;
 
 @RequiredArgsConstructor
-@Path("api-gateway")
+@Path("")
+@Log4j2
 public class ApiGatewayController {
 
     private final ApiGatewayProxyOperation apiGatewayProxyOperation;

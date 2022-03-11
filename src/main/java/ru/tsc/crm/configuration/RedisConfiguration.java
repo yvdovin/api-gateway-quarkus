@@ -1,6 +1,7 @@
 package ru.tsc.crm.configuration;
 
 import io.vertx.mutiny.redis.client.Redis;
+import ru.tsc.crm.error.exception.ExceptionFactory;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;

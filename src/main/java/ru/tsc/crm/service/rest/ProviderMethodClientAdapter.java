@@ -10,6 +10,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.util.Objects;
 
 import static java.util.Optional.ofNullable;
+import static ru.tsc.crm.error.ModuleOperationCode.resolve;
+import static ru.tsc.crm.error.SecurityExceptionCode.METHOD_ACCESS_DENIED;
+import static ru.tsc.crm.error.SecurityExceptionCode.SUB_METHOD_ACCESS_DENIED;
+import static ru.tsc.crm.error.exception.ExceptionFactory.newSecurityException;
 
 @Singleton
 public class ProviderMethodClientAdapter {
@@ -48,11 +52,11 @@ public class ProviderMethodClientAdapter {
                                         }
                                     }
                                 }
-                                throw new RuntimeException();
+                                throw newSecurityException(resolve(), SUB_METHOD_ACCESS_DENIED, "Метод='%s', подметод='%s'".formatted(method, subMethod));
                             }
 
                         }, () -> {
-                            throw new RuntimeException();
+                            throw newSecurityException(resolve(), METHOD_ACCESS_DENIED, "Метод='%s'".formatted(method));
                         })
                 )
                 .map(u -> null);
