@@ -24,7 +24,7 @@ public class ProxyWebClient {
     public Uni<HttpResponse<Buffer>> doProxyCall(RoutingContext routingContext) {
         var absoluteURI = routingContext.request().absoluteURI()
                 .replace("api-gateway/", "")
-                .replace("8081", "8084");
+                .replace("8082", "8084");
         MultiMap multiMap = new MultiMap(routingContext.request().headers());
         HttpRequest<Buffer> httpRequest = webClient.requestAbs(routingContext.request().method(), absoluteURI)
                 .putHeaders(multiMap);
@@ -37,7 +37,7 @@ public class ProxyWebClient {
     public Uni<HttpResponse<Buffer>> doProxyCall(org.jboss.resteasy.spi.HttpRequest request, byte[] body) {
         var absoluteURI = request.getUri().getAbsolutePath().toString()
                 .replace("api-gateway/", "")
-                .replace("8081", "8084");
+                .replace("8082", "8084");
 
 
         HttpRequest<Buffer> bufferHttpRequest = webClient.requestAbs(HttpMethod.valueOf(request.getHttpMethod()), absoluteURI);

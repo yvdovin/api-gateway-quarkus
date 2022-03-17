@@ -19,9 +19,12 @@ import javax.inject.Singleton;
 public class ApiGatewayProxyOperation {
 
     private final ProxyWebClientAdapter webClientAdapter;
+    private final AuthorizationOperation authorizationOperation;
 
     public Uni<HttpResponse<Buffer>> doCall(HttpRequest request, byte[] body) {
         ModuleOperationCode.PROXY_OPERATION.init();
-        return webClientAdapter.doProxyCall(request, body);
+        return authorizationOperation.doAuthorization(request).flatMap(unused ->
+                webClientAdapter.doProxyCall(request, body)
+        );
     }
 }

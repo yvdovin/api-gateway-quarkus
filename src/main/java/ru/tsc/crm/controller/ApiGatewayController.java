@@ -6,6 +6,7 @@ import io.vertx.mutiny.ext.web.client.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jboss.resteasy.spi.HttpRequest;
+import ru.tsc.crm.error.exception.HttpExceptionHandler;
 import ru.tsc.crm.logic.ApiGatewayProxyOperation;
 import ru.tsc.crm.mapping.MappingRefresh;
 
@@ -42,9 +43,7 @@ public class ApiGatewayController {
                             .entity(response.bodyAsJsonObject());
                     copyHeaders(response, entity);
                     return entity.build();
-                })
-                .onFailure()
-                .invoke(() -> System.out.println("FUCKING ERROR"));
+                });
     }
 
     @POST
@@ -57,9 +56,7 @@ public class ApiGatewayController {
                             .entity(response.bodyAsJsonObject());
                     copyHeaders(response, entity);
                     return entity.build();
-                })
-                .onFailure()
-                .invoke(() -> System.out.println("FUCKING ERROR"));
+                });
     }
 
     @PUT
@@ -71,9 +68,7 @@ public class ApiGatewayController {
                             .entity(response.bodyAsJsonObject());
                     copyHeaders(response, entity);
                     return entity.build();
-                })
-                .onFailure()
-                .invoke(() -> System.out.println("FUCKING ERROR"));
+                });
     }
 
     @DELETE
@@ -85,16 +80,16 @@ public class ApiGatewayController {
                             .entity(response.bodyAsJsonObject());
                     copyHeaders(response, entity);
                     return entity.build();
-                })
-                .onFailure()
-                .invoke(() -> System.out.println("FUCKING ERROR"));
+                });
     }
 
     private void copyHeaders(HttpResponse<Buffer> response, Response.ResponseBuilder builder) {
         response.headers().forEach(header -> {
             var key = header.getKey();
-            if (!(HttpHeaders.CONTENT_LENGTH.equals(key) ||
-                    X_B3_TRACE_ID.equals(key) || X_B3_SPAN_ID.equals(key))) {
+            if (!(HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(key) ||
+                    X_B3_TRACE_ID.equals(key) || X_B3_SPAN_ID.equals(key) ||
+                    //TODO потом можно убрать
+                    HttpHeaders.SET_COOKIE.equals(key))) {
                 builder.header(header.getKey(), header.getValue());
             }
         });

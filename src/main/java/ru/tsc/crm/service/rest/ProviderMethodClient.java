@@ -4,9 +4,7 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.MultiMap;
-import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.core.http.Cookie;
-import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.ext.web.client.WebClient;
 import org.apache.logging.log4j.ThreadContext;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -21,14 +19,13 @@ import java.net.ConnectException;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.vertx.core.http.HttpHeaders.COOKIE;
 import static java.util.Optional.ofNullable;
-import static ru.tsc.crm.constant.ContextPropertyKey.SESSION_ID;
 import static ru.tsc.crm.error.ModuleOperationCode.resolve;
-import static ru.tsc.crm.error.SecurityExceptionCode.PROVIDER_METHOD_SERVICE;
 import static ru.tsc.crm.error.exception.ExceptionFactory.*;
 import static ru.tsc.crm.quarkus.common.constant.MdcKey.SPAN_ID;
 import static ru.tsc.crm.quarkus.common.constant.MdcKey.TRACE_ID;
 import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_SPAN_ID;
 import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_TRACE_ID;
+import static ru.tsc.crm.util.http.HttpUtils.SESSION_ID;
 
 @Singleton
 public class ProviderMethodClient {
