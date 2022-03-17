@@ -31,9 +31,8 @@ public class HttpExceptionHandler implements ExceptionMapper<Exception> {
                 String exceptionCode = baseException.getCode();
                 if (SESSION_ID_IS_ABSENT.getCode().equals(exceptionCode)) {
                     status = 401;
-
                 } else if (SESSION_DATA_NOT_FOUND.getCode().equals(exceptionCode)) {
-                    status = 403;
+                    status = 401;
                     responseBuilder.header(HttpHeaders.SET_COOKIE, createDropSessionIdCookie(baseException.getDetails()));
                 } else if (METHOD_ACCESS_DENIED.getCode().equals(exceptionCode) ||
                         SUB_METHOD_ACCESS_DENIED.getCode().equals(exceptionCode)) {
