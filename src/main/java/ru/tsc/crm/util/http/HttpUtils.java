@@ -18,12 +18,6 @@ public class HttpUtils {
 
     public static final String SESSION_ID = "sessionId";
 
-    public static NewCookie createDropSessionIdCookie(HttpRequest httpRequest) {
-        var sessionId = extractCookie(httpRequest, SESSION_ID).get();
-        var host = resolveHost(httpRequest);
-        return new NewCookie(SESSION_ID, sessionId, "/", host, null, 0, true, true);
-    }
-
     public static NewCookie createDropSessionIdCookie(List<String> details) {
         var sessionId = details.get(0);
         var host = details.get(1);

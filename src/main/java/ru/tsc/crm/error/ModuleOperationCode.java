@@ -17,7 +17,7 @@ import static java.util.Optional.ofNullable;
 @Getter
 public enum ModuleOperationCode implements OperationCode {
 
-    PROXY_OPERATION("01", "proxyOperation");
+    BASE_OPERATION("01", "baseOperation");
 
     private static final Map<String, OperationCode> valuesByName = Stream.of(ModuleOperationCode.values())
             .collect(Collectors.toMap(ModuleOperationCode::getName, Function.identity()));

@@ -6,8 +6,7 @@ import io.vertx.mutiny.ext.web.client.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jboss.resteasy.spi.HttpRequest;
-import ru.tsc.crm.error.exception.HttpExceptionHandler;
-import ru.tsc.crm.logic.ApiGatewayProxyOperation;
+import ru.tsc.crm.logic.BaseOperation;
 import ru.tsc.crm.mapping.MappingRefresh;
 
 import javax.ws.rs.*;
@@ -24,7 +23,7 @@ import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_TRACE_ID;
 @Log4j2
 public class ApiGatewayController {
 
-    private final ApiGatewayProxyOperation apiGatewayProxyOperation;
+    private final BaseOperation baseOperation;
     private final MappingRefresh mappingRefresh;
 
     @POST
@@ -37,7 +36,7 @@ public class ApiGatewayController {
     @GET
     @Path("{var:.+}")
     public Uni<Response> get(@Context HttpRequest request, byte[] body) {
-        return apiGatewayProxyOperation.doCall(request, body)
+        return baseOperation.doCall(request, body)
                 .map(response -> {
                     Response.ResponseBuilder entity = Response.status(response.statusCode())
                             .entity(response.bodyAsJsonObject());
@@ -50,7 +49,7 @@ public class ApiGatewayController {
     @Path("{var:.+}")
     @Consumes(MediaType.WILDCARD)
     public Uni<Response> post(@Context HttpRequest request, byte[] body) {
-        return apiGatewayProxyOperation.doCall(request, body)
+        return baseOperation.doCall(request, body)
                 .map(response -> {
                     Response.ResponseBuilder entity = Response.status(response.statusCode())
                             .entity(response.bodyAsJsonObject());
@@ -62,7 +61,7 @@ public class ApiGatewayController {
     @PUT
     @Path("{var:.+}")
     public Uni<Response> put(@Context HttpRequest request, byte[] body) {
-        return apiGatewayProxyOperation.doCall(request, body)
+        return baseOperation.doCall(request, body)
                 .map(response -> {
                     Response.ResponseBuilder entity = Response.status(response.statusCode())
                             .entity(response.bodyAsJsonObject());
@@ -74,7 +73,7 @@ public class ApiGatewayController {
     @DELETE
     @Path("{var:.+}")
     public Uni<Response> delete(@Context HttpRequest request, byte[] body) {
-        return apiGatewayProxyOperation.doCall(request, body)
+        return baseOperation.doCall(request, body)
                 .map(response -> {
                     Response.ResponseBuilder entity = Response.status(response.statusCode())
                             .entity(response.bodyAsJsonObject());
