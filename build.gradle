@@ -9,7 +9,7 @@ version '1.0-SNAPSHOT'
 ext {
     quarkusVersion = '2.7.1.Final'
     lombokVersion = '1.18.22'
-    quarkusUtilLibVersion = '3.10.0.RC5'
+    quarkusUtilLibVersion = '3.12.0'
 }
 //TODO переделать с версиями
 dependencies {
@@ -20,9 +20,9 @@ dependencies {
             'io.quarkus:quarkus-scheduler',
             'io.smallrye.reactive:smallrye-mutiny-vertx-web-client',
             'org.projectlombok:lombok:1.18.20',
-            'ru.tsc.crm.quarkus:quarkus-common:3.10.0.RC5',
-            'ru.tsc.crm.quarkus:quarkus-http:3.10.0.RC5',
-            'ru.tsc.crm.quarkus:quarkus-error:3.10.0.RC5',
+            'ru.tsc.crm.quarkus:quarkus-common:3.12.0',
+            'ru.tsc.crm.quarkus:quarkus-http:3.12.0',
+            'ru.tsc.crm.quarkus:quarkus-error:3.12.0',
             'ru.tsc.crm:session-data-model:1.3.0')
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
