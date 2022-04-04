@@ -2,24 +2,23 @@ package ru.tsc.crm.configuration;
 
 import io.vertx.mutiny.redis.client.Redis;
 import ru.tsc.crm.error.exception.ExceptionFactory;
+import ru.tsc.crm.quarkus.redis.RedisClient;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
+
+import static ru.tsc.crm.error.InvocationExceptionCode.REDIS;
+import static ru.tsc.crm.error.ModuleOperationCode.resolve;
+import static ru.tsc.crm.error.exception.ExceptionFactory.newRetryableException;
 
 
 @Singleton
 public class RedisConfiguration {
 
-    /**
-     * {@link io.vertx.mutiny.redis.client.Redis} не конфигурируется при наличии пропертей "quarkus.redis"
-     *
-     * @param redis - конфигурируется автоматически при наличии пропертей "quarkus.redis"
-     * @return сконфигурированный {@link io.vertx.mutiny.redis.client.Redis}
-     */
     @Singleton
     @Produces
-    Redis redis(io.vertx.redis.client.Redis redis) {
-        return new Redis(redis);
+    RedisClient redis(io.vertx.mutiny.redis.client.Redis redis) {
+        return new RedisClient(redis, e -> newRetryableException(e, resolve(), REDIS, e.getMessage()));
     }
 
 }

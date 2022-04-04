@@ -7,12 +7,11 @@ import io.vertx.mutiny.redis.client.Request;
 import io.vertx.mutiny.redis.client.Response;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import ru.tsc.crm.quarkus.redis.RedisClient;
 import ru.tsc.crm.session.SessionDataUtil;
 import ru.tsc.crm.session.model.proto.SessionDataOuterClass;
 
 import javax.inject.Singleton;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 import static ru.tsc.crm.error.ModuleOperationCode.resolve;
@@ -41,7 +40,6 @@ public class RedisClientAdapter {
                         List<String> exceptionDetails = List.of(sessionId, host);
                         throw newSecurityException(resolve(), SESSION_DATA_NOT_FOUND, "sessionId='%s'".formatted(sessionId))
                                 .setDetails(exceptionDetails);
-                        //return Uni.createFrom().failure(() -> exception);
                     }
                     var login = SessionDataUtil.getSessionData(sessionDataBytes).getUser().getLogin();
                     var requests = List.of(

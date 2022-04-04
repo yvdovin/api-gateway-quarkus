@@ -8,6 +8,8 @@ import io.vertx.mutiny.ext.web.client.WebClient;
 import io.vertx.mutiny.core.MultiMap;
 import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import ru.tsc.crm.mapping.ServiceMapping;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -19,32 +21,38 @@ public class ProxyWebClient {
 
     public ProxyWebClient(@Named("proxyWebClient") WebClient webClient) {
         this.webClient = webClient;
-    }
 
-    public Uni<HttpResponse<Buffer>> doProxyCall(RoutingContext routingContext) {
-        var absoluteURI = routingContext.request().absoluteURI()
-                .replace("api-gateway/", "")
-                .replace("8082", "8084");
-        MultiMap multiMap = new MultiMap(routingContext.request().headers());
-        HttpRequest<Buffer> httpRequest = webClient.requestAbs(routingContext.request().method(), absoluteURI)
-                .putHeaders(multiMap);
-        if (routingContext.getBody() != null) {
-            return httpRequest.sendBuffer(Buffer.newInstance(routingContext.getBody()));
-        }
-        return httpRequest.send();
     }
 
     public Uni<HttpResponse<Buffer>> doProxyCall(org.jboss.resteasy.spi.HttpRequest request, byte[] body) {
-        var absoluteURI = request.getUri().getAbsolutePath().toString()
-                .replace("api-gateway/", "")
-                .replace("8082", "8084");
-
-
+        var absoluteURI = createAbsoluteUri(request.getUri().getRequestUri().toString());
         HttpRequest<Buffer> bufferHttpRequest = webClient.requestAbs(HttpMethod.valueOf(request.getHttpMethod()), absoluteURI);
-        request.getHttpHeaders().getRequestHeaders().forEach(bufferHttpRequest::putHeader);
+        copyHeaders(request, bufferHttpRequest);
         if (request.getInputStream() != null) {
             return bufferHttpRequest.sendBuffer(Buffer.buffer(body));
         }
         return bufferHttpRequest.send();
+    }
+
+
+    /**
+     * Удаляем хедер Host для локального тестирования
+     */
+    private void copyHeaders(org.jboss.resteasy.spi.HttpRequest request, HttpRequest<Buffer> bufferHttpRequest) {
+        request.getHttpHeaders().getRequestHeaders().forEach(bufferHttpRequest::putHeader);
+        if (bufferHttpRequest.headers().get("Host").contains("localhost")) {
+            bufferHttpRequest.headers().remove("Host");
+        }
+    }
+
+    private String extractServiceName(String uri) {
+        var tmp = uri.substring(uri.indexOf("api-gateway/") + "api-gateway/".length());
+        return tmp.substring(0, tmp.indexOf('/'));
+    }
+
+    private String createAbsoluteUri(String uri) {
+        var serviceName = extractServiceName(uri);
+        return ServiceMapping.getServicePath(serviceName) +
+                uri.substring(uri.indexOf(serviceName) + serviceName.length());
     }
 }

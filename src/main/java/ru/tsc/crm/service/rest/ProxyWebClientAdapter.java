@@ -16,10 +16,6 @@ public class ProxyWebClientAdapter {
 
     private final ProxyWebClient proxyWebClient;
 
-    public Uni<HttpResponse<Buffer>> doProxyCall(RoutingContext routingContext) {
-        return proxyWebClient.doProxyCall(routingContext);
-    }
-
     public Uni<HttpResponse<Buffer>> doProxyCall(HttpRequest request, byte[] body) {
         return proxyWebClient.doProxyCall(request, body);
     }

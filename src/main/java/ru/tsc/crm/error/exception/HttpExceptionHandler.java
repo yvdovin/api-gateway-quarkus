@@ -50,8 +50,6 @@ public class HttpExceptionHandler implements ExceptionMapper<Exception> {
             status = 500;
             resultException = newInternalException(exception, resolve(), exception.getMessage());
         }
-
-        //var errorPayload = errorResponseDataBuilder.build(resultException, null);
         log.error("HttpExceptionHandler.toResponse.thrown {}", resultException.getFullErrorInfo(), resultException);
         return responseBuilder.status(status)
                 .entity(resultException.getFullErrorInfo())

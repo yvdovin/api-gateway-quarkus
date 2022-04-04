@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jboss.resteasy.spi.HttpRequest;
 import ru.tsc.crm.logic.BaseOperation;
-import ru.tsc.crm.mapping.MappingRefresh;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -24,14 +23,6 @@ import static ru.tsc.crm.quarkus.http.constant.HttpHeader.X_B3_TRACE_ID;
 public class ApiGatewayController {
 
     private final BaseOperation baseOperation;
-    private final MappingRefresh mappingRefresh;
-
-    @POST
-    @Path("refresh")
-    public Response hello() {
-        mappingRefresh.refresh();
-        return Response.status(200).build();
-    }
 
     @GET
     @Path("{var:.+}")

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.message.MapMessage;
 import org.jboss.resteasy.spi.HttpRequest;
 import ru.tsc.crm.error.ModuleOperationCode;
 import ru.tsc.crm.error.exception.ExceptionFactory;
-import ru.tsc.crm.mapping.Mapping;
+import ru.tsc.crm.mapping.UrlMapping;
 import ru.tsc.crm.service.redis.RedisClientAdapter;
 import ru.tsc.crm.service.rest.ProviderMethodClientAdapter;
 import ru.tsc.crm.service.rest.ProxyWebClientAdapter;
@@ -59,7 +59,7 @@ public class BaseOperation {
 
     private Uni<Void> checkMethods(HttpRequest httpRequest, String sessionId) {
         var method = httpRequest.getHttpMethod();
-        var joiningMethodWithPath = method + Mapping.map(httpRequest.getUri().getPath());
+        var joiningMethodWithPath = method + UrlMapping.map(httpRequest.getUri().getPath());
         return providerMethodClientAdapter.checkMethods(joiningMethodWithPath, sessionId, httpRequest.getUri().getQueryParameters());
     }
 

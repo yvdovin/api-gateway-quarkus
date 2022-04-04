@@ -1,0 +1,28 @@
+quarkus:
+  redis:
+    #hosts: redis://192.168.235.131:6380
+    hosts: redis://192.168.235.131:6379
+    session-expiry: 1500
+  http:
+    port: 8082
+rest:
+  provider:
+    method:
+      #url: https://t1crm-demo.t1-consulting.ru/provider-method-service/api/v1
+      url: https://t1crm-test.tsc.ts/provider-method-service/api/v1
+log:
+  environment: local
+  service-name: api-gateway
+  category:
+    root:
+      level: INFO
+    "ru.tsc.crm":
+      level:
+        console: TRACE
+
+service-mapping:
+  opportunity-service: "https://t1crm-test.tsc.ts/opportunity-service"
+  dictionary-service: "http://dictionary-service:8080"
+
+
+
