@@ -2,13 +2,10 @@ package ru.tsc.crm.service.rest;
 
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.ext.web.RoutingContext;
 import io.vertx.mutiny.ext.web.client.HttpRequest;
 import io.vertx.mutiny.ext.web.client.WebClient;
-import io.vertx.mutiny.core.MultiMap;
 import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import ru.tsc.crm.mapping.ServiceMapping;
 
 import javax.inject.Named;
@@ -18,10 +15,11 @@ import javax.inject.Singleton;
 public class ProxyWebClient {
 
     private final WebClient webClient;
+    private final ServiceMapping serviceMapping;
 
-    public ProxyWebClient(@Named("proxyWebClient") WebClient webClient) {
+    public ProxyWebClient(@Named("proxyWebClient") WebClient webClient, ServiceMapping serviceMapping) {
         this.webClient = webClient;
-
+        this.serviceMapping = serviceMapping;
     }
 
     public Uni<HttpResponse<Buffer>> doProxyCall(org.jboss.resteasy.spi.HttpRequest request, byte[] body) {
@@ -52,7 +50,7 @@ public class ProxyWebClient {
 
     private String createAbsoluteUri(String uri) {
         var serviceName = extractServiceName(uri);
-        return ServiceMapping.getServicePath(serviceName) +
+        return serviceMapping.getServicePath(serviceName) +
                 uri.substring(uri.indexOf(serviceName) + serviceName.length());
     }
 }
