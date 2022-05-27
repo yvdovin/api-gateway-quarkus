@@ -23,6 +23,7 @@ log:
 service-mapping:
   opportunity-service: "https://t1crm-test.tsc.ts/opportunity-service"
   dictionary-service: "http://dictionary-service:8080"
+  spring-service: "http://localhost:8084"
 
 
 

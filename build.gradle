@@ -15,7 +15,18 @@ ext {
 
 dependencies {
     implementation platform("io.quarkus:quarkus-bom:$quarkusVersion")
+
+    // https://mvnrepository.com/artifact/com.graphql-java/nadel
+    //implementation 'com.graphql-java:nadel:2021-03-26T09-09-21-fabd441'
+
+
+    // https://mvnrepository.com/artifact/com.graphql-java/graphql-java
+    //implementation 'com.graphql-java:graphql-java:18.0'
+    implementation 'com.graphql-java:graphql-java-extended-scalars:17.0'
+    implementation 'com.graphql-java:graphql-java-extended-validation:17.0'
+
     implementation(
+            'io.quarkus:quarkus-smallrye-health',
             'io.quarkus:quarkus-reactive-routes',
             'io.quarkus:quarkus-redis-client',
             'io.quarkus:quarkus-scheduler',

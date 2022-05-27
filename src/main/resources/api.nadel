@@ -1,0 +1,20 @@
+service UserService {
+    type Query {
+        user(id:ID!): User
+    }
+    type User {
+        id: ID!
+        name: String
+    }
+}
+service IssueService {
+    type Query {
+        issues: [Issue]
+    }
+
+    type Issue {
+        id: ID
+        description: String
+        assignedTo: User => hydrated from UserService.user(id: $source.assigneeId) object identified by id
+    }
+}

@@ -53,6 +53,7 @@ public class WebClientConfiguration {
                 .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
                 .setIdleTimeout(idleTimeout)
                 .setVerifyHost(false)
+                .setMaxPoolSize(1000)
                 .addEnabledSecureTransportProtocol("TLSv1.1")
                 .addEnabledSecureTransportProtocol("TLSv1.2");
         var webClientInternal = (WebClientInternal) io.vertx.ext.web.client.WebClient.create(vertx, options);

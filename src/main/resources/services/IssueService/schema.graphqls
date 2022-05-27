@@ -1,0 +1,9 @@
+type Query {
+    issues: [Issue]
+}
+
+type Issue {
+    id: ID
+    description: String
+    assigneeId: ID
+}

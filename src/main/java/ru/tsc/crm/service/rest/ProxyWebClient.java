@@ -24,6 +24,7 @@ public class ProxyWebClient {
 
     public Uni<HttpResponse<Buffer>> doProxyCall(org.jboss.resteasy.spi.HttpRequest request, byte[] body) {
         var absoluteURI = createAbsoluteUri(request.getUri().getRequestUri().toString());
+        System.out.println("!!!!!!!!!!!!!!!" + absoluteURI);
         HttpRequest<Buffer> bufferHttpRequest = webClient.requestAbs(HttpMethod.valueOf(request.getHttpMethod()), absoluteURI);
         copyHeaders(request, bufferHttpRequest);
         if (request.getInputStream() != null) {

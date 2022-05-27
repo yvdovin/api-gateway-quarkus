@@ -34,15 +34,16 @@ public class BaseOperation {
     private final ProviderMethodClientAdapter providerMethodClientAdapter;
 
     public Uni<HttpResponse<Buffer>> doCall(HttpRequest httpRequest, byte[] body) {
-        ModuleOperationCode.BASE_OPERATION.init();
-        var sessionId = extractCookie(httpRequest, SESSION_ID)
-                .orElseThrow(() -> ExceptionFactory.newSecurityException(resolve(), SESSION_ID_IS_ABSENT, (String) null));
-        var host = resolveHost(httpRequest);
-        return resolveCurrentSessionDataBySessionId(sessionId, host)
-                .flatMap(sessionDataBySessionId -> checkMethods(httpRequest, sessionId)
-                        .flatMap(unused ->
-                                proxyWebClientAdapter.doProxyCall(httpRequest, body)
-                        ));
+//        ModuleOperationCode.BASE_OPERATION.init();
+//        var sessionId = extractCookie(httpRequest, SESSION_ID)
+//                .orElseThrow(() -> ExceptionFactory.newSecurityException(resolve(), SESSION_ID_IS_ABSENT, (String) null));
+//        var host = resolveHost(httpRequest);
+//        return resolveCurrentSessionDataBySessionId(sessionId, host)
+//                .flatMap(sessionDataBySessionId -> checkMethods(httpRequest, sessionId)
+//                        .flatMap(unused ->
+//                                proxyWebClientAdapter.doProxyCall(httpRequest, body)
+//                        ));
+        return proxyWebClientAdapter.doProxyCall(httpRequest, body);
     }
 
     private Uni<SessionDataOuterClass.SessionData> resolveCurrentSessionDataBySessionId(String sessionId, String host) {
